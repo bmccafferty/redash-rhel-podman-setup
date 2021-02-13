@@ -15,7 +15,6 @@ sudo systemctl enable --now snapd.socket
 sudo ln -s /var/lib/snapd/snap /snap
 sudo snap install pwgen-tyhicks
 dnf install wget
-curl -s -L http://t.co/tYTq5Pu | jsonpp
 wget https://github.com/jmhodges/jsonpp/releases/download/1.3.0/jsonpp-1.3.0-linux-x86_64.zip
 dnf -y install unzip
 unzip jsonpp-1.3.0-linux-x86_64.zip
