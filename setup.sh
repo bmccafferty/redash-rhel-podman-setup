@@ -8,7 +8,7 @@ install_docker(){
     # Install Docker
     export DEBIAN_FRONTEND=noninteractive
     sudo apt-get -qqy update
-    DEBIAN_FRONTEND=noninteractive sudo -E apt-get -qqy -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade 
+    DEBIAN_FRONTEND=noninteractive sudo -E apt-get -qqy -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
     sudo apt-get -yy install apt-transport-https ca-certificates curl software-properties-common wget pwgen
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
@@ -39,9 +39,9 @@ create_config() {
         touch $REDASH_BASE_PATH/env
     fi
 
-    COOKIE_SECRET=$(pwgen -1s 32)
-    SECRET_KEY=$(pwgen -1s 32)
-    POSTGRES_PASSWORD=$(pwgen -1s 32)
+    COOKIE_SECRET=$(/snap/pwgen-tyhicks/current/bin/pwgen -1s 32)
+    SECRET_KEY=$(/snap/pwgen-tyhicks/current/bin/pwgen -1s 32)
+    POSTGRES_PASSWORD=$(/snap/pwgen-tyhicks/current/bin/pwgen -1s 32)
     REDASH_DATABASE_URL="postgresql://postgres:${POSTGRES_PASSWORD}@postgres/postgres"
 
     echo "PYTHONUNBUFFERED=0" >> $REDASH_BASE_PATH/env
@@ -55,7 +55,7 @@ create_config() {
 
 setup_compose() {
     REQUESTED_CHANNEL=stable
-    LATEST_VERSION=`curl -s "https://version.redash.io/api/releases?channel=$REQUESTED_CHANNEL"  | json_pp  | grep "docker_image" | head -n 1 | awk 'BEGIN{FS=":"}{print $3}' | awk 'BEGIN{FS="\""}{print $1}'`
+    LATEST_VERSION=`curl -s "https://version.redash.io/api/releases?channel=$REQUESTED_CHANNEL"  | /usr/local/bin/json_pp  | grep "docker_image" | head -n 1 | awk 'BEGIN{FS=":"}{print $3}' | awk 'BEGIN{FS="\""}{print $1}'`
 
     cd $REDASH_BASE_PATH
     GIT_BRANCH="${REDASH_BRANCH:-master}" # Default branch/version to master if not specified in REDASH_BRANCH env var
@@ -65,11 +65,11 @@ setup_compose() {
     echo "export COMPOSE_FILE=/opt/redash/docker-compose.yml" >> ~/.profile
     export COMPOSE_PROJECT_NAME=redash
     export COMPOSE_FILE=/opt/redash/docker-compose.yml
-    sudo docker-compose run --rm server create_db
-    sudo docker-compose up -d
+    podman-compose run --rm server create_db
+    podman-compose up -d
 }
 
-install_docker
+#install_docker
 create_directories
 create_config
 setup_compose
