@@ -65,7 +65,7 @@ setup_compose() {
     echo "export COMPOSE_FILE=/opt/redash/docker-compose.yml" >> ~/.profile
     export COMPOSE_PROJECT_NAME=redash
     export COMPOSE_FILE=/opt/redash/docker-compose.yml
-    podman-compose run --rm server create_db
+    #podman-compose run --rm server create_db
     podman-compose up -d
 }
 
