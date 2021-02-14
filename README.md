@@ -1,4 +1,4 @@
-# Setup script for Redash with Podman on RHEL 8
+# Setup script for Redash with Podman on RHEL 8 (Rootless)
 
 This is adapted from the Ubuntu 18.04 docker install script here - https://github.com/getredash/setup
 
