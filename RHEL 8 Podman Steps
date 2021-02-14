@@ -1,31 +1,47 @@
-yum module install -y container-tools
-yum install -y podman-docker slirp4netns podman
+# Enable EPEL 8
+dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+
+# Install System Packages
+dnf module install -y container-tools
+dnf install -y podman-docker slirp4netns podman snapd unzip
+
+# Set up and Install snap
+systemctl enable --now snapd.socket
+ln -s /var/lib/snapd/snap /snap
+snap install pwgen-tyhicks
+
+# Install podman-compose
+curl -o /usr/local/bin/podman-compose https://raw.githubusercontent.com/containers/podman-compose/devel/podman_compose.py
+chmod +x /usr/local/bin/podman-compose
+
+# Install json_pp
+wget https://github.com/jmhodges/jsonpp/releases/download/1.3.0/jsonpp-1.3.0-linux-x86_64.zip
+unzip jsonpp-1.3.0-linux-x86_64.zip
+cp jsonpp-1.3.0/jsonpp /usr/local/bin/json_pp
+
+# Set up dirs for persistant storage
+mkdir -p /opt/redash
+chown -R podman:podman /opt/redash
+
+# Set podman sysctl settings
 echo "user.max_user_namespaces=28633" > /etc/sysctl.d/userns.conf
 sysctl -p /etc/sysctl.d/userns.conf
 echo "net.ipv4.ip_unprivileged_port_start=0"  > /etc/sysctl.d/podman-ports.conf
 sysctl -p /etc/sysctl.d/podman-ports.conf
+
+# Add podman user (allows rootless containers)
 useradd -c 'Podman User' podman
 passwd podman
-curl -o /usr/local/bin/podman-compose https://raw.githubusercontent.com/containers/podman-compose/devel/podman_compose.py
-chmod +x /usr/local/bin/podman-compose
-dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-yum -y install snapd
-systemctl enable --now snapd.socket
-ln -s /var/lib/snapd/snap /snap
-snap install pwgen-tyhicks
-dnf -y install wget
-wget https://github.com/jmhodges/jsonpp/releases/download/1.3.0/jsonpp-1.3.0-linux-x86_64.zip
-dnf -y install unzip
-unzip jsonpp-1.3.0-linux-x86_64.zip
-cd jsonpp-1.3.0
-cp jsonpp /usr/local/bin/json_pp
-mkdir -p /opt/redash
-chown -R podman:podman /opt/redash
+
+# Swap to podman user and run setup.sh script
 su - podman
 ./setup.sh
 cd /opt/redash/
+
+# Get server containers address and enter container to do inital DB setup
 podman ps
 podman exec -it 5cb97c9d5897 /bin/bash
 /app/manage.py database create_tables
+exit
 
-DONE!
+# Done :)
