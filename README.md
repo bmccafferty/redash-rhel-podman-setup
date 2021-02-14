@@ -1,10 +1,13 @@
-# Setup script for Redash with Docker on Ubuntu 18.04.
+# Setup script for Redash with Podman on RHEL 8
 
-This is a reference setup for Redash on a single Ubuntu 18.04 server, which uses Docker and Docker Compose for deployment and management.
+This is adapted from the Ubuntu 18.04 docker install script here - https://github.com/getredash/setup
 
-This is the same setup we use for our official images (for AWS & Google Cloud) and can be used as reference if you want to manually setup Redash in a different environment (different OS or different deployment location).
+This changes out docker for podman and docker-compose for podman-compose the `RHEL 8 Podman Steps` document contains the details of the steps inc where to run the script `setup.sh`
+
+This is the same setup redash use for our official images (for AWS & Google Cloud) and can be used as reference if you want to manually setup Redash in a different environment (different OS or different deployment location).
 
 * `setup.sh` is the script that installs everything and creates the directories.
+* `RHEL 8 Podman Steps` is the steps required before running the script (temp before added to script)
 * `docker-compose.yml` is the Docker Compose setup we use.
 * `packer.json` is Packer configuration we use to create the Cloud images.
 
